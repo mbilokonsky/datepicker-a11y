@@ -503,14 +503,30 @@ function monthDayYearText() {
   setDateLabels();
 }
 
-function setDateLabels() {
+function getDates() {
   var datePickDiv = document.getElementById('ui-datepicker-div');
   // in case we find no datepick div
   if (!datePickDiv) {
-    return;
+    return [];
   }
 
-  var dates = $('a.ui-state-default', datePickDiv);
+  return $('a.ui-state-default', datePickDiv);
+}
+
+function setTabIndex() {
+  var dates = getDates();
+  $(dates).each(function(index, date) {
+    if (date.classList.contains('ui-state-highlight')) {
+      date.setAttribute('tabindex', '0');
+    } else {
+      date.setAttribute('tabindex', '-1');
+    }
+  });
+}
+
+function setDateLabels() {
+  var dates = getDates();
+  var datePickDiv = document.getElementById('ui-datepicker-div');
 
   $(dates).each(function (index, date) {
     var currentRow = $(date).closest('tr'),
@@ -542,6 +558,7 @@ function setDateLabels() {
     }
 
     date.setAttribute('aria-label', dateText);
+    date.setAttribute('role', 'button');
   });
 }
 
@@ -598,6 +615,8 @@ function setHighlightState(newHighlight, container) {
   oldLabel = $(newHighlight).attr('aria-label') || '';
   newLabel = oldLabel + ' (Selected)';
   $(newHighlight).attr('aria-label', newLabel);
+
+  setTabIndex();
 }
 
 
