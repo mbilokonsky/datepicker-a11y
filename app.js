@@ -34,7 +34,8 @@ function dayTripper() {
 
       var today = $('.ui-datepicker-today a')[0];
 
-      $('.ui-state-default').attr('role', 'button');
+      $('.ui-state-default')
+        .attr('role', 'button');
 
       if (!today) {
         today = $('.ui-state-active')[0] ||
@@ -107,6 +108,9 @@ function datePickHandler() {
     if (27 === which) {
       keyVent.stopPropagation();
       return closeCalendar();
+
+    } else if (which === 0 || which === 32) { // SPACEBAR (0 for firefox apparently)
+      $(target).click();
     } else if (which === 37) { // LEFT arrow key
       // if we're on a date link...
       if (!$(target).hasClass('ui-datepicker-close') && $(target).hasClass('ui-state-default')) {
@@ -500,6 +504,7 @@ function monthDayYearText() {
     clean.parentNode.removeChild(clean);
   });
 
+  setColumnLabels();
   setDateLabels();
 }
 
@@ -522,6 +527,12 @@ function setTabIndex() {
       date.setAttribute('tabindex', '-1');
     }
   });
+}
+
+function setColumnLabels() {
+  var cols = $('.ui-datepicker-calendar thead th');
+  var labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  cols.each(function(index,col) { $(col).attr('aria-label', labels.shift())});
 }
 
 function setDateLabels() {
