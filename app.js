@@ -21,6 +21,26 @@ $(function () {
 
   dayTripper();
 
+  var closeTimeout;
+  $('body').on('focusin', function(e) {
+    var datepickerContainer = document.getElementById('ui-datepicker-div');
+    var target = e.target;
+    var contained = $.contains(datepickerContainer, target);
+
+    if (!contained) {
+      e.stopPropagation();
+      closeTimeout = setTimeout(function() {
+        closeCalendar();
+        closeTimeout = null;
+      }, 20);
+    } else {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+        closeTimeout = null;
+      }
+    }
+  });
+
 });
 
 
@@ -107,7 +127,9 @@ function datePickHandler() {
 
     if (27 === which) {
       keyVent.stopPropagation();
-      return closeCalendar();
+      closeCalendar();
+      resetFocus();
+      return;
 
     } else if (which === 0 || which === 32) { // SPACEBAR (0 for firefox apparently)
       $(target).click();
@@ -137,6 +159,7 @@ function datePickHandler() {
       if ($(target).hasClass('ui-state-default')) {
         setTimeout(function () {
           closeCalendar();
+          resetFocus();
         }, 100);
       } else if ($(target).hasClass('ui-datepicker-prev')) {
         handlePrevClicks();
@@ -170,13 +193,28 @@ function datePickHandler() {
 
 }
 
+function elementIsChildOfElement(child, potentialParent) {
+  while (child) {
+    if (child === potentialParent) {
+      return true;
+    }
+
+    child = child.parentNode;
+  }
+
+  return false;
+}
+
+function resetFocus() {
+  var input = $('#datepicker')[0];
+  input.focus();
+}
+
 function closeCalendar() {
   var container = $('#ui-datepicker-div');
   $(container).off('keydown');
   var input = $('#datepicker')[0];
   $(input).datepicker('hide');
-
-  input.focus();
 }
 
 ///////////////////////////////
@@ -206,7 +244,7 @@ function moveOneMonth(currentDate, dir) {
   button.click();
   setTimeout(function () {
     updateHeaderElements();
-    console.log('ok we moved a month', dir);
+
     var $newCells = $(ENABLED_SELECTOR);
     var newTd = $newCells[currentIdx];
     var newAnchor = newTd && $(newTd).find('a')[0];
@@ -219,8 +257,6 @@ function moveOneMonth(currentDate, dir) {
 
     setHighlightState(newAnchor, $('#ui-datepicker-div')[0]);
     newAnchor.focus();
-
-    console.log("now setting focus to:", newAnchor);
 
   }, 0);
 
@@ -492,6 +528,7 @@ function downHandler(target, cont, nextLink) {
 
 function onCalendarHide() {
   closeCalendar();
+  resetFocus();
 }
 
 // add an aria-label to the date link indicating the currently focused date
@@ -570,6 +607,8 @@ function setDateLabels() {
 
     date.setAttribute('aria-label', dateText);
     date.setAttribute('role', 'button');
+
+    setTabIndex();
   });
 }
 
