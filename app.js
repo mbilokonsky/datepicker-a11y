@@ -131,8 +131,6 @@ function datePickHandler() {
       resetFocus();
       return;
 
-    } else if (which === 0 || which === 32) { // SPACEBAR (0 for firefox apparently)
-      $(target).click();
     } else if (which === 37) { // LEFT arrow key
       // if we're on a date link...
       if (!$(target).hasClass('ui-datepicker-close') && $(target).hasClass('ui-state-default')) {
@@ -155,7 +153,7 @@ function datePickHandler() {
         keyVent.preventDefault();
         downHandler(target, container, next);
       }
-    } else if (which === 13) { // ENTER
+    } else if (which === 13 || which === 0 || which === 32) { // ENTER or SPACE
       if ($(target).hasClass('ui-state-default')) {
         setTimeout(function () {
           closeCalendar();
