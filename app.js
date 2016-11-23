@@ -594,7 +594,7 @@ function setDateLabels() {
 
     // AT Reads: {month} {date} {year} {day}
     // "December 18 2014 Thursday"
-    var dateText = monthName + ' ' + date.innerHTML + ' ' + year + ' ' + daySpan.title;
+    var dateText = monthName + ' ' + date.innerHTML + ', ' + year + ' ' + daySpan.title;
     // AT Reads: {date(number)} {name of day} {name of month} {year(number)}
     // var dateText = date.innerHTML + ' ' + daySpan.title + ' ' + monthName + ' ' + year;
     // add an aria-label to the date link reading out the currently focused date
