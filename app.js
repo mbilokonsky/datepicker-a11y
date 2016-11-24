@@ -592,12 +592,8 @@ function setDateLabels() {
       return;
     }
 
-    // AT Reads: {month} {date} {year} {day}
-    // "December 18 2014 Thursday"
-    var dateText = monthName + ' ' + date.innerHTML + ', ' + year + ' ' + daySpan.title;
-    // AT Reads: {date(number)} {name of day} {name of month} {year(number)}
-    // var dateText = date.innerHTML + ' ' + daySpan.title + ' ' + monthName + ' ' + year;
-    // add an aria-label to the date link reading out the currently focused date
+    // "Thursday, December 18, 2014"
+    var dateText = daySpan.title + ', ' + monthName + ' ' + date.innerHTML + ', ' + year;
 
     if (td.classList.contains('ui-datepicker-today')) {
       dateText += ' (Today)'
@@ -605,6 +601,12 @@ function setDateLabels() {
 
     date.setAttribute('aria-label', dateText);
     date.setAttribute('role', 'button');
+    date.addEventListener('keypress', function(e) {
+      var code = e.which;
+      if (code === 32 || code === 0) { // space
+        $(date).click();
+      }
+    });
 
     setTabIndex();
   });
